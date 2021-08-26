@@ -107,7 +107,7 @@ class Board(object):  # szachownica wraz z ogólną obsługą rozgrywki
             if m[1][1]==X and m[1][2]==Y:
                 return True
         return False
-    def mate(self)# matowanie jako szachowanie i brak ruchu:
+    #def mate(self)# matowanie jako szachowanie i brak ruchu:
         
     def make_move(self, move_to_do):  # wykonywanie wybranego ruchu
         x_1 = (move_to_do[0].a)-1
