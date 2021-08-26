@@ -35,31 +35,23 @@ class Game(object):
                     if self.POLE_GRY[i][j][0] == "W":
                         image = pygame.image.load(
                             "W"+str(self.new_Board.fields[i][j].figura.nazwa)+".png")
-                        self.OKNOGRY.blit(image, (x, y))
+                        self.OKNOGRY.blit(image, (x-5, y-5))
                     elif self.POLE_GRY[i][j][0] == "B":
                         image = pygame.image.load(
                             "B"+str(self.new_Board.fields[i][j].figura.nazwa)+".png")
-                        self.OKNOGRY.blit(image, (x, y))
-
+                        self.OKNOGRY.blit(image, (x-5, y-5))
     def graj(self):  # gra zaprogramowana jako zamienne ruchy z agentem losowym
         pygame.init()
         pygame.display.set_caption('Szachy')
         licznik = 0
-        while True:
+        while not self.new_Board.draw():
             self.OKNOGRY.fill((0, 0, 0))
             self.rysuj_plansze()
             self.rysuj_pole_gry()
             pygame.display.update()
-            if self.new_Board.player == "B":
-                #print(self.new_Board.moves())
-                self.new_Board.make_move(random.choice(self.new_Board.moves()))
-            else:
-                # for x in self.new_Board.moves():
-                # print(x[1])
-                #wybor = input()
-                # self.new_Board.make_move(self.new_Board.moves()[int(wybor)])
-                self.new_Board.make_move(random.choice(self.new_Board.moves()))
-            time.sleep(2)
+            self.new_Board.make_move(random.choice(self.new_Board.moves()))
+            time.sleep(0.5)
+            
 
 
 new_Game = Game()

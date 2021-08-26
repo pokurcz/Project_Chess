@@ -15,14 +15,10 @@ class Pawn(Pieces):
                 moz.append(["P", self.a+1, self.b])
             if(self.a == 2 and Plan[self.a][self.b-1] == "." and Plan[self.a+1][self.b-1] == "."):
                 moz.append(["P", self.a+2, self.b])
-            if self.a+1 < 9 and self.b+1< 9:
-                print([Plan[self.a-1][self.b-1],self.a+1, self.b+1] )
             if(self.a+1 < 9 and self.b+1 < 9 and Plan[self.a][self.b][0] == "B"):
                 moz.append(["P", self.a+1, self.b+1])
-                print("bicie")
             if(self.a+1 < 9 and self.b-1 > 0 and Plan[self.a][self.b-2][0] == "B"):
                 moz.append(["P", self.a+1, self.b-1])
-                print("bicie")
         else:
             if(self.a-1 > 0 and Plan[self.a-2][self.b-1] == "."):
                 moz.append(["P", self.a-1, self.b])
@@ -54,7 +50,6 @@ class Bishop(Pieces):
         while i >= 1 and j >= 1 and Plan[i-1][j-1] == ".":
             R = ["B", i, j]
             moz.append(R)
-            print(R)
             i -= 1
             j -= 1
         if i+1 >= 1 and j+1 >= 1 and Plan[i][j][0] != self.col:
@@ -80,8 +75,7 @@ class Bishop(Pieces):
         if i+1 >= 1 and j-1 <= 8 and Plan[i][j-2][0] != self.col:
             R = ["B", i+1, j-1]
             moz.append(R)
-        print(moz)
-        #return moz
+        return moz
 
 
 class Queen(Pieces):
@@ -104,7 +98,6 @@ class Queen(Pieces):
         while i >= 1 and j >= 1 and Plan[i-1][j-1] == ".":
             R = ["Q", i, j]
             moz.append(R)
-            print(R)
             i -= 1
             j -= 1
         if i >= 1 and j >= 1 and Plan[i-1][j-1][0] != self.col:
@@ -163,7 +156,7 @@ class Queen(Pieces):
         if i < 9 and Plan[self.a-1][i-1][0] != self.col:
             R = ["Q", self.a, i]
             moz.append(R)
-        #return moz
+        return moz
 
 
 class Knight(Pieces):
@@ -184,7 +177,7 @@ class Knight(Pieces):
         for x in r:
             if x[0] in lista and x[1] in lista and Plan[x[0]-1][x[1]-1][0] != self.col:
                 moz.append(["K", x[0], x[1]])
-        #return moz
+        return moz
 
 
 class Rook(Pieces):
@@ -225,7 +218,7 @@ class Rook(Pieces):
         if i < 9 and Plan[self.a-1][i-1][0] != self.col:
             R = ["R", self.a, i]
             moz.append(R)
-        #return moz
+        return moz
 
 
 class King(Pieces):
@@ -246,4 +239,4 @@ class King(Pieces):
         for x in r:
             if x[0] in lista and x[1] in lista and Plan[x[0]-1][x[1]-1][0] != self.col:
                 moz.append(["KG", x[0], x[1]])
-        #return moz
+        return moz

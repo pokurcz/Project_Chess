@@ -14,13 +14,6 @@ class Field(object):  # pojedyncze pole, wraz z metoda czy jest atakowane
         self.b = y
         self.figura = piece
 
-    def be_attacked(self, Board_tmp):
-        for i in Board_tmp.moves():
-            if i[1][0] == self.a and i[1][1] == self.b:
-                return True
-            else:
-                return False
-
 
 class Board(object):  # szachownica wraz z ogólną obsługą rozgrywki
     def __init__(self):
@@ -78,23 +71,7 @@ class Board(object):  # szachownica wraz z ogólną obsługą rozgrywki
                     self.fields[i].append(Field(i, j, None))
         self.history = []
 
-    def check(self):  # czy jest szach
-        for j in self.fields:
-            for i in j:
-                if i.be_attacked(self) and type(i.figura) == King and (i.figura.col != self.player):
-                    return True
-                else:
-                    return False
-
-    def mate(self):  # czy jest mat
-        for field in self.fields:
-            for i in field:
-                if i.be_attacked(self) and type(i.figura) == King and (i.figura.col == self.player) and len(self.moves()) == 0:
-                    return True
-                else:
-                    return False
-
-    def draw(self):  # czy jest remis
+    def draw(self):  # czy jest remis(pat, lub powtórzenie pozycji)
         if len(self.moves()) == 0:
             return True
         licz = 0
@@ -115,31 +92,47 @@ class Board(object):  # szachownica wraz z ogólną obsługą rozgrywki
                         for m in move_tmp:
                             move.append([field.figura, m])
         return move
-
+    def promotion(self): # promocja na hetmana
+        for i in self.fields:
+            if type(i.figura) == Pawn and (i.a==1 or i.a==8):
+                i.figura = Queen(i.a,i.b,i.figura.col)
+    
+    def check(self): #sprawdzanie szachu(sprawdź przed zmianą gracza)
+        for i in self.fields:
+            if type(i.figura) == King and i.figura.col!= self.player:
+                X = i.figura.a
+                Y = i.figura.b
+        potencial_move = self.moves()
+        for m in potencial_move:
+            if m[1][1]==X and m[1][2]==Y:
+                return True
+        return False
+    def mate(self)# matowanie jako szachowanie i brak ruchu:
+        
     def make_move(self, move_to_do):  # wykonywanie wybranego ruchu
         x_1 = (move_to_do[0].a)-1
         y_1 = (move_to_do[0].b)-1
         x_2 = (move_to_do[1][1])-1
         y_2 = (move_to_do[1][2])-1
         self.plan[x_1][y_1] = "."
-        tmp = copy.deepcopy(self.fields[x_1][y_1].figura)
-        if(self.fields[x_1][y_1].figura != None):
-            print("error")
-        if type(tmp) == Pawn:
-            self.plan[x_2][y_2] = tmp.col+"P"
-        if type(tmp) == Bishop:
-            self.plan[x_2][y_2] = tmp.col+"B"
-        if type(tmp) == Knight:
-            self.plan[x_2][y_2] = tmp.col+"K"
-        if type(tmp) == King:
-            self.plan[x_2][y_2] = tmp.col+"KG"
-        if type(tmp) == Rook:
-            self.plan[x_2][y_2] = tmp.col+"R"
-        if type(tmp) == Queen:
-            self.plan[x_2][y_2] = tmp.col+"Q"
-        self.fields[x_2][y_2].a = x_2
-        self.fields[x_2][y_2].b = y_2
-        self.fields[x_2][y_2].figura = tmp
+        col = self.fields[x_1][y_1].figura.col
+        if type(self.fields[x_1][y_1].figura) == Pawn:
+            self.plan[x_2][y_2] = col+"P"
+        if type(self.fields[x_1][y_1].figura) == Bishop:
+            self.plan[x_2][y_2] = col+"B"
+        if type(self.fields[x_1][y_1].figura) == Knight:
+            self.plan[x_2][y_2] = col+"K"
+        if type(self.fields[x_1][y_1].figura) == King:
+            self.plan[x_2][y_2] = col+"KG"
+        if type(self.fields[x_1][y_1].figura) == Rook:
+            self.plan[x_2][y_2] = col+"R"
+        if type(self.fields[x_1][y_1].figura) == Queen:
+            self.plan[x_2][y_2] = col+"Q"
+        self.fields[x_2][y_2].a = x_2+1
+        self.fields[x_2][y_2].b = y_2+1
+        self.fields[x_2][y_2].figura = self.fields[x_1][y_1].figura
+        self.fields[x_2][y_2].figura.a = x_2+1
+        self.fields[x_2][y_2].figura.b =  y_2+1
         self.fields[x_1][y_1] = Field(x_1, y_1, None)
         if self.player == "W":
             self.player = "B"
@@ -148,5 +141,4 @@ class Board(object):  # szachownica wraz z ogólną obsługą rozgrywki
         plan = []
         for i in self.plan:
             plan.append(i.copy())
-        self.history.append(plan)
-        #print(self.history[len(self.history)-1])
+        self.history.append(plan)# zbieranie stanów gry które już były
