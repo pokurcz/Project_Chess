@@ -94,14 +94,19 @@ class Board(object):  # szachownica wraz z ogólną obsługą rozgrywki
         return move
     def promotion(self): # promocja na hetmana
         for i in self.fields:
-            if type(i.figura) == Pawn and (i.a==1 or i.a==8):
-                i.figura = Queen(i.a,i.b,i.figura.col)
+            for j in i:
+                print(j)
+                if type(j.figura) == Pawn and (j.a==0 or j.a==8):
+                    j.figura = Queen(j.a,j.b,j.figura.col)
     
     def check(self): #sprawdzanie szachu(sprawdź przed zmianą gracza)
+        X = None
+        Y = None
         for i in self.fields:
-            if type(i.figura) == King and i.figura.col!= self.player:
-                X = i.figura.a
-                Y = i.figura.b
+            for j in i:
+                if type(j.figura) == King and j.figura.col!= self.player:
+                    X = j.figura.a
+                    Y = j.figura.b
         potencial_move = self.moves()
         for m in potencial_move:
             if m[1][1]==X and m[1][2]==Y:
@@ -134,10 +139,6 @@ class Board(object):  # szachownica wraz z ogólną obsługą rozgrywki
         self.fields[x_2][y_2].figura.a = x_2+1
         self.fields[x_2][y_2].figura.b =  y_2+1
         self.fields[x_1][y_1] = Field(x_1, y_1, None)
-        if self.player == "W":
-            self.player = "B"
-        else:
-            self.player = "W"
         plan = []
         for i in self.plan:
             plan.append(i.copy())

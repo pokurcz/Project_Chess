@@ -40,6 +40,16 @@ class Game(object):
                         image = pygame.image.load(
                             "B"+str(self.new_Board.fields[i][j].figura.nazwa)+".png")
                         self.OKNOGRY.blit(image, (x-5, y-5))
+    def checked_mate(self,board, tmp_move):
+        board.make_move(tmp_move)
+        if board.player=="W":
+            board.player ="B"
+        else:
+            board.player ="W"
+        if board.check()==True:
+                return True
+        return False
+
     def graj(self):  # gra zaprogramowana jako zamienne ruchy z agentem losowym
         pygame.init()
         pygame.display.set_caption('Szachy')
@@ -49,7 +59,25 @@ class Game(object):
             self.rysuj_plansze()
             self.rysuj_pole_gry()
             pygame.display.update()
-            self.new_Board.make_move(random.choice(self.new_Board.moves()))
+            Lose = True
+            MOVES = self.new_Board.moves()
+            for tmp_moves in MOVES:
+                if not self.checked_mate(copy.deepcopy(self.new_Board),tmp_moves):
+                    Lose = False
+                else:
+                    MOVES.remove(tmp_moves)
+                if 
+            if Lose == True:
+                print("check_mate")
+                break
+            self.new_Board.make_move(random.choice(MOVES))
+            if self.new_Board.check()==True :
+                print("szach milordzie")
+            if self.new_Board.player=="W":
+                self.new_Board.player ="B"
+            else:
+                self.new_Board.player ="W"
+            self.new_Board.promotion()
             time.sleep(0.5)
             
 
