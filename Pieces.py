@@ -1,4 +1,4 @@
-class Pieces:  # figury wraz z możliwymi ruchami każdej figury
+class Pieces:  # pieces with possible moves
     def __init__(self, x, y, color):
         self.a = x
         self.b = y
