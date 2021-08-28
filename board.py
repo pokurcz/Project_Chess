@@ -8,14 +8,14 @@ import copy
 import random
 
 
-class Field(object):  # pojedyncze pole, wraz z metoda czy jest atakowane
+class Field(object):  # single field with potencial piece
     def __init__(self, x, y, piece):
         self.a = x
         self.b = y
         self.figura = piece
 
 
-class Board(object):  # szachownica wraz z ogólną obsługą rozgrywki
+class Board(object):  # Board with game mechanics
     def __init__(self):
         self.plan = [["WR", "WK", "WB", "WQ", "WKG", "WB", "WK", "WR"], ["WP", "WP", "WP", "WP", "WP", "WP", "WP", "WP"], [".", ".", ".", ".", ".", ".", ".", "."], [".", ".", ".", ".", ".", ".", ".", "."], [
             ".", ".", ".", ".", ".", ".", ".", "."], [".", ".", ".", ".", ".", ".", ".", "."], ["BP", "BP", "BP", "BP", "BP", "BP", "BP", "BP"], ["BR", "BK", "BB", "BQ", "BKG", "BB", "BK", "BR"]]
@@ -65,13 +65,13 @@ class Board(object):  # szachownica wraz z ogólną obsługą rozgrywki
         for i in range(0, 8):
             for j in range(0, 8):
                 if self.plan[i][j] != ".":
-                    self.fields[i].append(Field(i, j, figure[licznik]))
+                    self.fields[i].append(Field(i+1, j+1, figure[licznik]))
                     licznik += 1
                 else:
-                    self.fields[i].append(Field(i, j, None))
-        self.history = []
+                    self.fields[i].append(Field(i+1, j+1, None))
+        self.history=[]
 
-    def draw(self):  # czy jest remis(pat, lub powtórzenie pozycji)
+    def draw(self):  # checking if there is a draw
         if len(self.moves()) == 0:
             return True
         licz = 0
@@ -82,7 +82,7 @@ class Board(object):  # szachownica wraz z ogólną obsługą rozgrywki
                 return True
         return False
 
-    def moves(self):  # produkowanie możliwych ruchów
+    def moves(self):  # possible moves
         move = []
         for i in self.fields:
             for field in i:
@@ -92,29 +92,34 @@ class Board(object):  # szachownica wraz z ogólną obsługą rozgrywki
                         for m in move_tmp:
                             move.append([field.figura, m])
         return move
-    def promotion(self): # promocja na hetmana
+    def promotion(self): # promotion to Queen
         for i in self.fields:
             for j in i:
-                print(j)
-                if type(j.figura) == Pawn and (j.a==0 or j.a==8):
+                #print(j)
+                if type(j.figura) == Pawn and (j.a==1 or j.a==8):
                     j.figura = Queen(j.a,j.b,j.figura.col)
-    
-    def check(self): #sprawdzanie szachu(sprawdź przed zmianą gracza)
+    def checked(self):
         X = None
         Y = None
         for i in self.fields:
             for j in i:
-                if type(j.figura) == King and j.figura.col!= self.player:
+                if type(j.figura) == King and j.figura.col== self.player:
                     X = j.figura.a
                     Y = j.figura.b
+        if self.player=="W":
+            self.player ="B"
+        else:
+            self.player ="W"
         potencial_move = self.moves()
+        if self.player=="W":
+            self.player ="B"
+        else:
+            self.player ="W"
         for m in potencial_move:
             if m[1][1]==X and m[1][2]==Y:
                 return True
         return False
-    #def mate(self)# matowanie jako szachowanie i brak ruchu:
-        
-    def make_move(self, move_to_do):  # wykonywanie wybranego ruchu
+    def make_move(self, move_to_do):  # make a move(change Board)
         x_1 = (move_to_do[0].a)-1
         y_1 = (move_to_do[0].b)-1
         x_2 = (move_to_do[1][1])-1
@@ -139,7 +144,4 @@ class Board(object):  # szachownica wraz z ogólną obsługą rozgrywki
         self.fields[x_2][y_2].figura.a = x_2+1
         self.fields[x_2][y_2].figura.b =  y_2+1
         self.fields[x_1][y_1] = Field(x_1, y_1, None)
-        plan = []
-        for i in self.plan:
-            plan.append(i.copy())
-        self.history.append(plan)# zbieranie stanów gry które już były
+        self.history.append(self.plan)

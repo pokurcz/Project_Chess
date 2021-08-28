@@ -15,7 +15,7 @@ class Game(object):
         self.POLE_GRY = self.new_Board.plan
         self.obrazki = {}
 
-    def rysuj_plansze(self):  # rysowanie planszy
+    def drawing_Board(self):
         for i in range(0, 8):
             for j in range(0, 8):
                 if i % 2 == j % 2:
@@ -25,7 +25,7 @@ class Game(object):
                     pygame.draw.rect(self.OKNOGRY, (35, 35, 35),
                                      Rect(j * 50, i * 50, 50, 50))
 
-    def rysuj_pole_gry(self):  # rysowanie figur
+    def drawing_pieces(self):
         for i in range(0, 8):
             for j in range(0, 8):
                 pole = i * 8 + j
@@ -40,45 +40,42 @@ class Game(object):
                         image = pygame.image.load(
                             "B"+str(self.new_Board.fields[i][j].figura.nazwa)+".png")
                         self.OKNOGRY.blit(image, (x-5, y-5))
-    def checked_mate(self,board, tmp_move):
-        board.make_move(tmp_move)
-        if board.player=="W":
-            board.player ="B"
-        else:
-            board.player ="W"
-        if board.check()==True:
-                return True
-        return False
 
-    def graj(self):  # gra zaprogramowana jako zamienne ruchy z agentem losowym
+    def graj(self):  # game beetween random agents
         pygame.init()
-        pygame.display.set_caption('Szachy')
+        pygame.display.set_caption('Chess')
         licznik = 0
-        while not self.new_Board.draw():
+        while True:
             self.OKNOGRY.fill((0, 0, 0))
-            self.rysuj_plansze()
-            self.rysuj_pole_gry()
+            self.drawing_Board()
+            self.drawing_pieces()
             pygame.display.update()
-            Lose = True
             MOVES = self.new_Board.moves()
-            for tmp_moves in MOVES:
-                if not self.checked_mate(copy.deepcopy(self.new_Board),tmp_moves):
-                    Lose = False
+            MOVES_2=[]
+            if self.new_Board.checked()==True :
+                print("Check")
+            for X in MOVES:
+                tmp = copy.deepcopy(self.new_Board)
+                tmp.make_move(X)
+                if  not tmp.checked():
+                    MOVES_2.append(X)
+            if self.new_Board.checked() and len(MOVES_2)==0:
+                if self.new_Board.player=="W":
+                    print("Black Win")
+                    return None
                 else:
-                    MOVES.remove(tmp_moves)
-                if 
-            if Lose == True:
-                print("check_mate")
-                break
-            self.new_Board.make_move(random.choice(MOVES))
-            if self.new_Board.check()==True :
-                print("szach milordzie")
+                    print("White Win")
+                    return None
+            if len(MOVES)==0:
+                print("Draw")
+                return None
+            self.new_Board.make_move(random.choice(MOVES_2))
             if self.new_Board.player=="W":
                 self.new_Board.player ="B"
             else:
                 self.new_Board.player ="W"
             self.new_Board.promotion()
-            time.sleep(0.5)
+            time.sleep(0.1)
             
 
 
